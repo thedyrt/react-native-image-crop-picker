@@ -16,6 +16,7 @@ import android.provider.MediaStore;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.FileProvider;
 import android.util.Base64;
+import android.util.Log;
 import android.webkit.MimeTypeMap;
 import android.content.ContentResolver;
 
@@ -407,19 +408,19 @@ class PickerModule extends ReactContextBaseJavaModule implements ActivityEventLi
     }
 
     private String getMimeType(String url) {
-        String mimeType = null;
-        Uri uri = Uri.fromFile(new File(url));
-        if (uri.getScheme().equals(ContentResolver.SCHEME_CONTENT)) {
-            ContentResolver cr = this.reactContext.getContentResolver();
-            mimeType = cr.getType(uri);
-        } else {
-            String fileExtension = MimeTypeMap.getFileExtensionFromUrl(uri
-                    .toString());
-            if (fileExtension != null) {
-                mimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(fileExtension.toLowerCase());
-            }
-        }
-        return mimeType;
+      String mimeType = null;
+      Uri uri = Uri.fromFile(new File(url));
+      if (uri.getScheme().equals(ContentResolver.SCHEME_CONTENT)) {
+          ContentResolver cr = this.reactContext.getContentResolver();
+          mimeType = cr.getType(uri);
+      } else {
+          String fileExtension = MimeTypeMap.getFileExtensionFromUrl(uri
+                  .toString());
+          if (fileExtension != null) {
+              mimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(fileExtension.toLowerCase());
+          }
+      }
+      return mimeType;
     }
 
     private WritableMap getSelection(Activity activity, Uri uri, boolean isCamera) throws Exception {
@@ -432,6 +433,7 @@ class PickerModule extends ReactContextBaseJavaModule implements ActivityEventLi
     }
 
     private void getAsyncSelection(final Activity activity, Uri uri, boolean isCamera) throws Exception {
+        Log.d("CROP_PICKER", uri.toString());
         String path = resolveRealPath(activity, uri, isCamera);
         if (path == null || path.isEmpty()) {
             resultCollector.notifyProblem(E_NO_IMAGE_DATA_FOUND, "Cannot resolve asset path.");
